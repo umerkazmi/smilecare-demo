@@ -1,188 +1,8 @@
-"use client";
-
-import { useState } from "react";
-
-
-type Lead = {
-  name: string;
-  contact: string;
-  treatment: string;
-  patientType: string;
-  preferredTime: string;
-  status: "New" | "Warm" | "Hot";
-};
-type Message = {
-  role: "assistant" | "user";
-  text: string;
-};
-
-const responses: Record<string, string> = {
-  whitening:
-    "Great choice! Teeth whitening is one of our most popular treatments. Are you looking to have it done soon?",
-  soon: "Perfect. We have appointments available this week. Are you a new patient or have you visited SmileCare before?",
-  new:
-    "Welcome to SmileCare! 😊 What day would work best for you?",
-  existing:
-    "Welcome back! 😊 What day would work best for you?",
-};
+import WidgetFor from "@/components/WidgetFor";
 
 export default function Home() {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      text: "Hi! 👋 I'm SmileCare's AI assistant. How can I help you today?",
-    },
-  ]);
-  const [input, setInput] = useState("");
-  const [leadCaptured, setLeadCaptured] = useState(false);
-
-  const [lead, setLead] = useState<Lead>({
-  name: "",
-  contact: "",
-  treatment: "",
-  patientType: "",
-  preferredTime: "",
-  status: "New",
-});
-
-
-  function sendMessage(text?: string) {
-    const message = (text ?? input).trim();
-
-    if (!message) return;
-
-    setMessages((current) => [
-      ...current,
-      { role: "user", text: message },
-    ]);
-
-    setInput("");
-
-    setTimeout(() => {
-      let reply =
-        "Thanks for letting me know! I can help you with that. Would you like to book an appointment?";
-
-      const lower = message.toLowerCase();
-      // Capture treatment
-if (
-  lower.includes("whitening") ||
-  lower.includes("white teeth")
-) {
-  setLead((prev) => ({
-    ...prev,
-    treatment: "Teeth Whitening",
-    status: "Warm",
-  }));
-}
-
-// Capture patient type
-if (lower.includes("new")) {
-  setLead((prev) => ({
-    ...prev,
-    patientType: "New Patient",
-  }));
-}
-
-if (lower.includes("existing")) {
-  setLead((prev) => ({
-    ...prev,
-    patientType: "Existing Patient",
-  }));
-}
-
-// Capture preferred appointment time
-if (
-  lower.includes("friday") ||
-  lower.includes("saturday") ||
-  lower.includes("morning") ||
-  lower.includes("afternoon") ||
-  lower.includes("evening")
-) {
-  setLead((prev) => ({
-    ...prev,
-    preferredTime: message,
-    status: "Hot",
-  }));
-}
-
-      if (
-        lower.includes("whitening") ||
-        lower.includes("white") ||
-        lower.includes("teeth")
-      ) {
-        reply = responses.whitening;
-      } else if (
-        lower.includes("yes") ||
-        lower.includes("soon") ||
-        lower.includes("this week")
-      ) {
-        reply = responses.soon;
-      } else if (lower.includes("new")) {
-        reply = responses.new;
-      } else if (lower.includes("existing")) {
-        reply = responses.existing;
-      } else if (
-        lower.includes("friday") ||
-        lower.includes("appointment")
-      ) {
-        reply =
-          "Excellent! I can reserve Friday at 2:30 PM for you. May I have your name and phone number to confirm the appointment?";
-        setLeadCaptured(true);
-      }
-
-      setMessages((current) => [
-        ...current,
-        { role: "assistant", text: reply },
-      ]);
-    }, 600);
-  }
-
   return (
     <main className="min-h-screen bg-white text-slate-900">
-      {/* Lead Capture Preview */}
-<div className="hidden fixed bottom-6 left-6 z-40 w-80 rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
-  <div className="mb-4 flex items-center justify-between">
-    <h3 className="font-bold text-slate-900">
-      Current Lead
-    </h3>
-
-    <span
-      className={`rounded-full px-3 py-1 text-xs font-semibold ${
-        lead.status === "Hot"
-          ? "bg-red-100 text-red-700"
-          : lead.status === "Warm"
-          ? "bg-yellow-100 text-yellow-700"
-          : "bg-slate-100 text-slate-600"
-      }`}
-    >
-      {lead.status}
-    </span>
-  </div>
-
-  <div className="space-y-3 text-sm">
-    <div>
-      <p className="text-slate-400">Treatment</p>
-      <p className="font-medium text-slate-800">
-        {lead.treatment || "Not captured yet"}
-      </p>
-    </div>
-
-    <div>
-      <p className="text-slate-400">Patient</p>
-      <p className="font-medium text-slate-800">
-        {lead.patientType || "Not captured yet"}
-      </p>
-    </div>
-
-    <div>
-      <p className="text-slate-400">Preferred Time</p>
-      <p className="font-medium text-slate-800">
-        {lead.preferredTime || "Not captured yet"}
-      </p>
-    </div>
-  </div>
-</div>
       {/* Navigation */}
       <nav className="border-b border-slate-100 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -200,7 +20,7 @@ if (
           </div>
 
           <button
-            onClick={() => setOpen(true)}
+            data-open-chat
             className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-700"
           >
             Book an Appointment
@@ -228,14 +48,14 @@ if (
 
             <div className="mt-8 flex flex-wrap gap-4">
               <button
-                onClick={() => setOpen(true)}
+                data-open-chat
                 className="rounded-full bg-slate-900 px-7 py-3.5 font-semibold text-white transition hover:bg-slate-700"
               >
                 Book an Appointment
               </button>
 
               <button
-                onClick={() => setOpen(true)}
+                data-open-chat
                 className="rounded-full border border-slate-300 bg-white px-7 py-3.5 font-semibold text-slate-700 transition hover:bg-slate-100"
               >
                 Ask a Question
@@ -344,126 +164,14 @@ if (
           </p>
 
           <button
-            onClick={() => setOpen(true)}
+            data-open-chat
             className="mt-7 rounded-full bg-white px-7 py-3.5 font-semibold text-slate-900 transition hover:bg-slate-200"
           >
             Talk to our AI Assistant
           </button>
         </div>
       </section>
-
-      {/* Floating AI button */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 flex items-center gap-3 rounded-full bg-slate-900 px-5 py-4 text-white shadow-2xl transition hover:scale-105"
-        >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg">
-            ✦
-          </span>
-
-          <span className="font-semibold">Ask SmileCare AI</span>
-        </button>
-      )}
-
-      {/* Chat window */}
-      {open && (
-        <div className="fixed bottom-5 right-5 z-50 flex h-[650px] w-[380px] max-w-[calc(100vw-40px)] flex-col overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-slate-200">
-          {/* Header */}
-          <div className="bg-slate-900 px-5 py-5 text-white">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-bold">SmileCare AI</div>
-                <div className="mt-1 text-xs text-slate-300">
-                  ● Online · Usually replies instantly
-                </div>
-              </div>
-
-              <button
-                onClick={() => setOpen(false)}
-                className="text-xl text-slate-300 hover:text-white"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50 p-5">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={`flex ${
-                  message.role === "user"
-                    ? "justify-end"
-                    : "justify-start"
-                }`}
-              >
-                <div
-                  className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm leading-6 ${
-                    message.role === "user"
-                      ? "rounded-br-md bg-slate-900 text-white"
-                      : "rounded-bl-md bg-white text-slate-700 shadow-sm"
-                  }`}
-                >
-                  {message.text}
-                </div>
-              </div>
-            ))}
-
-            {leadCaptured && (
-              <div className="rounded-2xl border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-                <div className="font-bold">✓ Appointment opportunity created</div>
-                <div className="mt-1">
-                  Friday · 2:30 PM · Teeth Whitening
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Quick actions */}
-          <div className="border-t border-slate-100 bg-white p-3">
-            <div className="mb-3 flex gap-2 overflow-x-auto">
-              <button
-                onClick={() => sendMessage("I'm interested in teeth whitening")}
-                className="whitespace-nowrap rounded-full border border-slate-200 px-3 py-2 text-xs font-medium hover:bg-slate-50"
-              >
-                Teeth whitening
-              </button>
-
-              <button
-                onClick={() => sendMessage("I want an appointment this week")}
-                className="whitespace-nowrap rounded-full border border-slate-200 px-3 py-2 text-xs font-medium hover:bg-slate-50"
-              >
-                Appointment
-              </button>
-            </div>
-
-            <div className="flex gap-2">
-              <input
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") sendMessage();
-                }}
-                placeholder="Type your message..."
-                className="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none focus:border-slate-400"
-              />
-
-              <button
-                onClick={() => sendMessage()}
-                className="rounded-xl bg-slate-900 px-4 text-white"
-              >
-                ↑
-              </button>
-            </div>
-
-            <div className="mt-2 text-center text-[10px] text-slate-400">
-              Powered by SmileCare AI
-            </div>
-          </div>
-        </div>
-      )}
+      <WidgetFor client="smilecare" />
     </main>
   );
 }

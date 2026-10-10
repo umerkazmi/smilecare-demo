@@ -34,3 +34,11 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## AI receptionist engine
+
+- `lib/clients.ts` holds each business (facts, rules, what to collect). Add a business by adding one entry.
+- `app/api/chat/route.ts` talks to the OpenAI Responses API and calls a `save_lead` tool when it has a name, contact and need.
+- `lib/notify.ts` emails the lead through Resend.
+- Demo pages: `/` (dental) and `/law` (construction law firm). Any element with `data-open-chat` opens the widget.
+- Copy `.env.example` to `.env.local` and fill it in. On Vercel, add the same variables in Project Settings.
